@@ -6,12 +6,11 @@ class DBcreater:
     params = config()
 
     def createDB(self):
-        conn = psycopg2.connect(dbname='hh', **self.params)
+        conn = psycopg2.connect(database='postgres', **self.params)
         conn.autocommit = True
         with conn.cursor() as cur:
             cur.execute("SELECT COUNT(*) FROM pg_catalog.pg_database WHERE datname = 'hh'")
             result = cur.fetchone()
-
             if result[0] == 0:
                 cur.execute("CREATE DATABASE hh;")
                 conn.commit()
@@ -21,14 +20,8 @@ class DBcreater:
         conn.close()
 
     def create_table_hh_companys(self):
-        with psycopg2.connect(dbname='hh', **self.params) as conn:
+        with psycopg2.connect(database='hh', **self.params) as conn:
             with conn.cursor() as cur:
-                cur.execute("""SELECT * FROM hh_companys;""")
-                rows = cur.fetchall()
-                if rows is not None:
-                    cur.execute("""DROP TABLE hh_vacancies;
-                                    DROP TABLE hh_companys;""")
-
                 cur.execute("""CREATE TABLE IF NOT EXISTS hh_companys(
                                 company_id int,
                                 company_name varchar(50) NOT NULL,
@@ -38,7 +31,7 @@ class DBcreater:
 
     def create_table_hh_vacancies(self):
 
-        with psycopg2.connect(dbname='hh', **self.params) as conn:
+        with psycopg2.connect(database='hh', **self.params) as conn:
             with conn.cursor() as cur:
                 cur.execute("""CREATE TABLE IF NOT EXISTS hh_vacancies(
                                 vacanci_id int UNIQUE,
@@ -54,7 +47,7 @@ class DBcreater:
         conn.commit()
 
     def insert_table_hh_company(self, data):
-        with psycopg2.connect(dbname='hh', **self.params) as conn:
+        with psycopg2.connect(database='hh', **self.params) as conn:
             with conn.cursor() as cur:
                 for item in data:
                     cur.executemany("INSERT INTO hh_companys VALUES (%s, %s) "
@@ -62,7 +55,7 @@ class DBcreater:
                                     [(item['employer_id'], item['employer_name'])])
 
     def insert_table_hh_vacancies(self, data):
-        with psycopg2.connect(dbname='hh', **self.params) as conn:
+        with psycopg2.connect(database='hh', **self.params) as conn:
             with conn.cursor() as cur:
                 for item in data:
                     cur.executemany("INSERT INTO hh_vacancies VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"

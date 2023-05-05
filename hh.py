@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import requests
-import time
 import json
 
 
@@ -22,7 +21,6 @@ class HH(Engine):
         company_id = set()
         for item in range(15):
             request_hh = requests.get(url, params={"keywords": self.word}).json()['items']
-            time.sleep(0.5)
             for item2 in request_hh:
                 if len(company_id) == 15:
                     break
@@ -35,7 +33,6 @@ class HH(Engine):
             url = 'https://api.hh.ru/vacancies/'
             for item in range(1):
                 request_hh = requests.get(url, params={"employer_id": str(id)}).json()['items']
-                time.sleep(0.5)
                 for item2 in request_hh:
                     if item2["salary"] is None:
                         item2["salary"] = {}
